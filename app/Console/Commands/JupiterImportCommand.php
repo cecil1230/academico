@@ -144,10 +144,6 @@ class JupiterImportCommand extends Command
                     ]
                 );
 
-                if (! $user->hasRole('teacher')) {
-                    $user->assignRole('teacher');
-                }
-
                 $teacher = Teacher::firstOrCreate(['id' => $user->id]);
 
                 if ($staffId) {
@@ -171,9 +167,6 @@ class JupiterImportCommand extends Command
                                 'password' => Hash::make(Str::random(16)),
                             ]
                         );
-                        if (! $u->hasRole('teacher')) {
-                            $u->assignRole('teacher');
-                        }
                         Teacher::firstOrCreate(['id' => $u->id]);
                         $teachersMap[$tCode] = $u->id;
                     }
@@ -208,10 +201,6 @@ class JupiterImportCommand extends Command
                     ]
                 );
 
-                if (! $user->hasRole('student')) {
-                    $user->assignRole('student');
-                }
-
                 // 性别转换
                 $genderId = match (strtoupper(trim($row['Gender'] ?? ''))) {
                     'F' => 1,
@@ -226,16 +215,12 @@ class JupiterImportCommand extends Command
                     $birthdate = Carbon::createFromFormat('Ymd', $rawBdate)->format('Y-m-d');
                 }
 
-                $gradeLvl = trim($row['GradeLevel'] ?? '');
-                $levelId = $levelsMap[$gradeLvl] ?? null;
-
                 Student::updateOrCreate(
                     ['id' => $user->id],
                     [
                         'idnumber' => $studentId,
                         'gender_id' => $genderId,
                         'birthdate' => $birthdate,
-                        'level_id' => $levelId,
                     ]
                 );
 
@@ -296,6 +281,17 @@ class JupiterImportCommand extends Command
                 ['total' => 100, 'grade_type_category_id' => 1]
             );
 
+            // 创建成绩评价类型与标准
+            $evalType = \App\Models\EvaluationType::firstOrCreate(['name' => 'Standard Grades (S1 / Yr)']);
+            $evalType->gradeTypes()->syncWithoutDetaching([$gradeTypeS1->id, $gradeTypeYr->id]);
+
+            foreach ($coursesMap as $c) {
+                if ($c->evaluation_type_id !== $evalType->id) {
+                    $c->evaluation_type_id = $evalType->id;
+                    $c->save();
+                }
+            }
+
             $enrollmentCount = 0;
             $gradeCount = 0;
 
@@ -323,9 +319,6 @@ class JupiterImportCommand extends Command
                             'status_id' => 1, // 已选课在读
                         ]
                     );
-
-                    // 绑定成绩类型到课程
-                    $course->gradeTypes()->syncWithoutDetaching([$gradeTypeS1->id, $gradeTypeYr->id]);
 
                     $enrollmentsMap[$enrollKey] = $enrollment;
                     $enrollmentCount++;

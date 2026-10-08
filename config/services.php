@@ -42,4 +42,20 @@ return [
         ],
     ],
 
+    'azure' => [
+        'client_id' => env('AZURE_CLIENT_ID'),
+        'client_secret' => env('AZURE_CLIENT_SECRET'),
+        'redirect' => env('AZURE_REDIRECT_URI'),
+        'tenant' => env('AZURE_TENANT_ID', 'common'),
+        'proxy' => env('PROXY_SERVER', null),
+    ],
+
+    'canvas' => [
+        'domain' => env('CANVAS_DOMAIN'),
+        'token' => env('CANVAS_API_TOKEN'),
+        'account_id' => env('CANVAS_ACCOUNT_ID', 1),
+        'diffing_dataset_id' => env('CANVAS_SIS_DIFFING_DATASET_ID', 'academico_master_feed'),
+        'auth_provider' => env('CANVAS_AUTH_PROVIDER', 'saml'),
+    ],
+
 ];

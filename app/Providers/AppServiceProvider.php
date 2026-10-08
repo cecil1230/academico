@@ -8,8 +8,11 @@ use App\Interfaces\InvoicingInterface;
 use App\Interfaces\MailingSystemInterface;
 use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use SocialiteProviders\Azure\AzureExtendSocialite;
+use SocialiteProviders\Manager\SocialiteWasCalled;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -48,6 +51,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Event::listen(SocialiteWasCalled::class, AzureExtendSocialite::class.'@handle');
+
         $this->registerGates();
 
         Table::configureUsing(function (Table $table): Table {

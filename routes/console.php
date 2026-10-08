@@ -105,3 +105,10 @@ Schedule::command('activitylog:clean')->monthly();
 
 // Build cached report daily at 05:15
 Schedule::command('academico:build-report')->dailyAt('05:15');
+
+// Daily Canvas LMS SIS import sync at 02:00
+Schedule::command('canvas:sync-sis')
+    ->dailyAt('02:00')
+    ->withoutOverlapping()
+    ->onOneServer();
+

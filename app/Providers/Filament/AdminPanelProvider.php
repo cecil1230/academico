@@ -54,6 +54,23 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::USER_MENU_BEFORE,
                 fn (): string => Blade::render('@livewire(\'locale-switcher\')'),
             )
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
+                fn (): string => Blade::render('
+                    <div class="mb-4">
+                        <a href="{{ route(\'auth.azure.redirect\') }}" 
+                           class="flex items-center justify-center gap-2 w-full py-2.5 px-4 text-sm font-semibold rounded-lg bg-[#2F2F2F] hover:bg-[#1E1E1E] text-white shadow-sm transition">
+                            <svg class="w-4 h-4" viewBox="0 0 21 21"><path fill="#f25022" d="M1 1h9v9H1z"/><path fill="#00a4ef" d="M1 11h9v9H1z"/><path fill="#7fba00" d="M1 1h9v9H11z"/><path fill="#ffb900" d="M1 11h9v9H11z"/></svg>
+                            <span>{{ __(\'auth.login_with_microsoft\') }}</span>
+                        </a>
+                        <div class="relative flex py-3 items-center">
+                            <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+                            <span class="flex-shrink mx-4 text-xs text-gray-400">{{ __(\'auth.or\') }}</span>
+                            <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+                        </div>
+                    </div>
+                '),
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

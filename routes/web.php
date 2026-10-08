@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AzureAuthController;
 use App\Http\Middleware\ForceUpdate;
 use App\Livewire\RegistrationWizard;
 use App\Livewire\StudentAccount;
@@ -26,6 +27,10 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::get('/register', RegistrationWizard::class)->name('register');
     Route::get('/login', fn () => redirect('/admin/login'))->name('login');
+
+    // 微软 Entra ID SSO 认证路由
+    Route::get('/auth/azure', [AzureAuthController::class, 'redirect'])->name('auth.azure.redirect');
+    Route::get('/auth/azure/callback', [AzureAuthController::class, 'callback'])->name('auth.azure.callback');
 });
 
 // Student-facing routes (authenticated)

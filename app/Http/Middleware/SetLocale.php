@@ -33,13 +33,13 @@ class SetLocale
             return $request->session()->get('locale');
         }
 
-        $allowed = config('app.translatable_locales', ['en', 'es', 'fr']);
+        $allowed = config('app.translatable_locales', ['zh_CN', 'en', 'es', 'fr', 'pt']);
         $preferred = $request->getPreferredLanguage($allowed);
 
         if ($preferred) {
             return $preferred;
         }
 
-        return config('app.locale', 'en');
+        return config('app.locale', 'zh_CN');
     }
 }
